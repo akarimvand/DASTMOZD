@@ -5,17 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محاسبه حقوق</title>
     <style>
-        /* فونت ایران سنس سریف به صورت محلی */
-        @font-face {
-            font-family: 'IranianSans';
-            src: url('data:font/woff2;base64,/* Base64 encoded font data */') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
-
         /* استایل‌های کلی */
         body {
-            font-family: 'IranianSans', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Tahoma, Geneva, Verdana, sans-serif; /* فونت Tahoma */
             direction: rtl;
             text-align: right;
             background-color: #f8f9fa;
@@ -109,7 +101,7 @@
         }
 
         #mantagheToggle.region-special {
-            background-color: ##ff8400;
+            background-color: #ff8400; /* رنگ منطقه ویژه */
         }
 
         /* فوتر */
@@ -483,7 +475,7 @@
             }
         }
 
-        // تابع فرمت‌دهی اعداد به فرمت فارسی
+        // تابع فرمت‌دهی اعداد به فرمت فارسی با جداکننده‌های سه‌رقمی
         function formatNumber(num) {
             return num.toLocaleString('fa-IR');
         }
