@@ -13,9 +13,13 @@
             font-style: normal;
         }
 
+        /* اعمال فونت IRANSansWeb برای تمامی عناصر */
+        * {
+            font-family: 'IRANSansWeb', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+
         /* استایل‌های کلی */
         body {
-            font-family: 'IRANSansWeb', Tahoma, Geneva, Verdana, sans-serif;
             direction: rtl;
             text-align: right;
             background-color: #f8f9fa;
@@ -63,12 +67,12 @@
         .form-group {
             display: flex;
             align-items: center;
-            margin-bottom: 10px; /* فاصله بین فیلدها */
+            margin-bottom: 10px;
         }
 
         .form-group label {
             flex: 1;
-            margin-left: 10px; /* کپشن‌ها سمت راست فیلدها */
+            margin-left: 10px;
             font-weight: bold;
         }
 
@@ -79,7 +83,7 @@
             border: 1px solid #ddd;
             border-radius: 10px;
             font-size: 14px;
-            width: 60%; /* عرض فیلدها کمتر */
+            width: 60%;
         }
 
         /* دکمه‌های شبیه iOS */
@@ -143,7 +147,7 @@
         /* حضور و مرخصی در یک سطر */
         .hozor-morakhasi {
             display: flex;
-            gap: 20px; /* فاصله بین حضور و مرخصی بیشتر شده است */
+            gap: 20px;
         }
 
         .hozor-morakhasi select {
@@ -241,7 +245,7 @@
                         <!-- پاداش -->
                         <div class="form-group">
                             <label for="padash">پاداش:</label>
-                            <input type="number" id="padash" class="form-control" value="0">
+                            <select id="padash" class="form-control"></select>
                         </div>
                     </form>
                 </div>
@@ -327,12 +331,9 @@
             populateMonthDropdown();
             populateChildrenDropdown();
             populateAyabDropdown();
+            populatePadashDropdown(); // اضافه کردن این خط
             updateMonthDays();
-
-            // تنظیم پیش‌فرض منطقه به "منطقه ویژه"
             setDefaultRegion();
-
-            // اضافه کردن رویداد تغییر به کامبوی ماه
             document.getElementById('monthName').addEventListener('change', function () {
                 updateMonthDays();
             });
@@ -379,6 +380,18 @@
                 ayab.appendChild(option);
             }
             ayab.value = '0'; // پیش‌فرض: ۰
+        }
+
+        // پر کردن dropdown پاداش
+        function populatePadashDropdown() {
+            const padash = document.getElementById('padash');
+            for (let i = 5000000; i <= 200000000; i += 5000000) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = formatNumber(i);
+                padash.appendChild(option);
+            }
+            padash.value = '0'; // پیش‌فرض: ۰
         }
 
         // تابع به‌روزرسانی تعداد روزهای ماه و حضور
