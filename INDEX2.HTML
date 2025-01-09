@@ -5,9 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محاسبه حقوق</title>
     <style>
+        /* فونت IRANSansWeb به صورت محلی */
+        @font-face {
+            font-family: 'IRANSansWeb';
+            src: url('IRANSansWeb.ttf') format('truetype'); /* فایل فونت در کنار فایل HTML قرار دارد */
+            font-weight: normal;
+            font-style: normal;
+        }
+
         /* استایل‌های کلی */
         body {
-            font-family: Tahoma, Geneva, Verdana, sans-serif; /* فونت Tahoma */
+            font-family: 'IRANSansWeb', Tahoma, Geneva, Verdana, sans-serif;
             direction: rtl;
             text-align: right;
             background-color: #f8f9fa;
@@ -23,6 +31,24 @@
             background-color: #fff;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* تیتر برنامه */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #007bff;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 0 0;
         }
 
         .panel {
@@ -113,10 +139,26 @@
             border-top: 1px solid #ddd;
             font-size: 14px;
         }
+
+        /* حضور و مرخصی در یک سطر */
+        .hozor-morakhasi {
+            display: flex;
+            gap: 20px; /* فاصله بین حضور و مرخصی بیشتر شده است */
+        }
+
+        .hozor-morakhasi select {
+            width: 45%;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- تیتر برنامه و توضیح -->
+        <div class="header">
+            <h1>برنامه محاسبه حقوق و دستمزد 1403</h1>
+            <p>این برنامه بر اساس قوانین به‌روز اداره کار در سال 1403 طراحی شده است و به شما کمک می‌کند حقوق خالص، مالیات، بیمه و سایر کسورات را به‌طور دقیق محاسبه کنید.</p>
+        </div>
+
         <div class="row">
             <!-- پنل ورودی کاربر -->
             <div class="col-md-6">
@@ -133,15 +175,13 @@
                             <label for="monthDays">تعداد روزهای ماه:</label>
                             <input type="text" id="monthDays" class="form-control" readonly>
                         </div>
-                        <!-- Hozor (Presence) -->
+                        <!-- Hozor (Presence) and Morakhasi (Vacation) -->
                         <div class="form-group">
-                            <label for="hozor">حضور:</label>
-                            <select id="hozor" class="form-control"></select>
-                        </div>
-                        <!-- Morakhasi (Vacation) -->
-                        <div class="form-group">
-                            <label for="morakhasi">مرخصی:</label>
-                            <select id="morakhasi" class="form-control"></select>
+                            <label for="hozor">حضور و مرخصی:</label>
+                            <div class="hozor-morakhasi">
+                                <select id="hozor" class="form-control"></select>
+                                <select id="morakhasi" class="form-control"></select>
+                            </div>
                         </div>
                         <!-- T_Farzand (Number of Children) -->
                         <div class="form-group">
@@ -160,8 +200,8 @@
                         </div>
                         <!-- Ayab (Coming and Going) -->
                         <div class="form-group">
-                            <label for="ayab"> (ایاب و ذهاب):</label>
-                            <input type="number" id="ayab" class="form-control" value="0">
+                            <label for="ayab">هزینه ایاب و ذهاب:</label>
+                            <select id="ayab" class="form-control"></select>
                         </div>
                         <!-- Zarib Ezafe -->
                         <div class="form-group">
@@ -178,17 +218,17 @@
                             <label for="eSaati">اضافه کاری ساعتی:</label>
                             <input type="number" id="eSaati" class="form-control" value="50">
                         </div>
-                        <!-- Haghtahol -->
+                        <!-- وضعیت تاهل -->
                         <div class="form-group">
-                            <label for="haghtahol">حق تاهل:</label>
-                            <div class="toggle-button">
-                                <input type="number" id="haghtahol" class="form-control" value="5000000" readonly>
-                                <button type="button" class="btn-ios" onclick="toggleHaghtahol()">تغییر حق تاهل</button>
-                            </div>
+                            <label for="tahol">وضعیت تاهل:</label>
+                            <select id="tahol" class="form-control">
+                                <option value="0">مجرد</option>
+                                <option value="5000000">متاهل</option>
+                            </select>
                         </div>
-                        <!-- Mantaghe (منطقه ویژه) -->
+                        <!-- Mantaghe (منطقه محل کار) -->
                         <div class="form-group">
-                            <label for="mantaghe">منطقه:</label>
+                            <label for="mantaghe">منطقه محل کار:</label>
                             <div class="toggle-button">
                                 <button type="button" id="mantagheToggle" class="btn-secondary" onclick="toggleMantaghe()">منطقه عادی</button>
                             </div>
@@ -286,6 +326,7 @@
         function initializeForm() {
             populateMonthDropdown();
             populateChildrenDropdown();
+            populateAyabDropdown();
             updateMonthDays();
 
             // تنظیم پیش‌فرض منطقه به "منطقه ویژه"
@@ -328,6 +369,18 @@
             tFarzand.value = '0'; // پیش‌فرض: ۰ فرزند
         }
 
+        // پر کردن dropdown هزینه ایاب و ذهاب
+        function populateAyabDropdown() {
+            const ayab = document.getElementById('ayab');
+            for (let i = 5000000; i <= 150000000; i += 5000000) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = formatNumber(i);
+                ayab.appendChild(option);
+            }
+            ayab.value = '0'; // پیش‌فرض: ۰
+        }
+
         // تابع به‌روزرسانی تعداد روزهای ماه و حضور
         function updateMonthDays() {
             const selectedMonthIndex = parseInt(document.getElementById('monthName').value) - 1;
@@ -368,12 +421,6 @@
             morakhasi.value = '0'; // پیش‌فرض: ۰ روز مرخصی
         }
 
-        // تابع تغییر مقدار حق تاهل
-        function toggleHaghtahol() {
-            const haghtahol = document.getElementById('haghtahol');
-            haghtahol.value = haghtahol.value === '0' ? '5000000' : '0';
-        }
-
         // تابع تغییر منطقه (عادی/ویژه)
         function toggleMantaghe() {
             const mantagheToggle = document.getElementById('mantagheToggle');
@@ -401,7 +448,7 @@
                 eKargahi: parseFloat(document.getElementById('eKargahi').value),
                 eSaati: parseFloat(document.getElementById('eSaati').value),
                 ayab: parseFloat(document.getElementById('ayab').value),
-                haghtahol: parseFloat(document.getElementById('haghtahol').value),
+                tahol: parseFloat(document.getElementById('tahol').value),
                 mantaghe: document.getElementById('mantagheToggle').textContent === 'منطقه ویژه',
                 hozor: parseInt(document.getElementById('hozor').value),
                 morakhasi: parseInt(document.getElementById('morakhasi').value),
@@ -422,7 +469,7 @@
 
         // تابع محاسبه حقوق
         function calculateSalary(inputs) {
-            const { dastmozRozaneh, zarib, tFarzand, zaribEzafe, eKargahi, eSaati, ayab, haghtahol, mantaghe, hozor, morakhasi, monthDays, mMosaede, padash } = inputs;
+            const { dastmozRozaneh, zarib, tFarzand, zaribEzafe, eKargahi, eSaati, ayab, tahol, mantaghe, hozor, morakhasi, monthDays, mMosaede, padash } = inputs;
 
             // محاسبه حقوق پایه با توجه به تعداد روزهای ماه
             const mDasMah = (hozor + morakhasi) * dastmozRozaneh;
@@ -446,7 +493,7 @@
             const mMalyat = calculateTax(nakhales2, mantaghe);
 
             // محاسبه حقوق خالص
-            const mDaryafti = nakhales - hBimeh - mMalyat + mHaghOlad + ayab + haghtahol - mMosaede + padash;
+            const mDaryafti = nakhales - hBimeh - mMalyat + mHaghOlad + ayab + tahol - mMosaede + padash;
 
             return { mDasMah, mHaghOlad, hMaskan, hBon, mEzafe, hBimeh, mMalyat, mDaryafti };
         }
