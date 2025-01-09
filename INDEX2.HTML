@@ -4,74 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محاسبه حقوق</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* فونت ایران سنس سریف به صورت محلی */
-        @font-face {
-            font-family: 'IranianSans';
-            src: url('data:font/woff2;base64,/* Base64 encoded font data */') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        /* استایل‌های کلی */
+        /* تم ثابت و مدرن */
         body {
-            font-family: 'IranianSans', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             direction: rtl;
             text-align: right;
             background-color: #f8f9fa;
             color: #333;
-            margin: 0;
-            padding: 0;
         }
 
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
 
         .panel {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
 
         .panel h2 {
             color: #007bff;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* کاهش فاصله */
         }
 
         .form-group {
             display: flex;
             align-items: center;
-            margin-bottom: 10px; /* فاصله بین فیلدها */
+            margin-bottom: 8px; /* کاهش فاصله بین فیلدها */
         }
 
         .form-group label {
             flex: 1;
-            margin-left: 10px; /* کپشن‌ها سمت راست فیلدها */
+            margin: 0 10px 0 0;
             font-weight: bold;
         }
 
         .form-group input,
         .form-group select {
             flex: 2;
-            padding: 8px;
+            padding: 6px; /* کاهش padding */
             border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-            width: 60%; /* عرض فیلدها کمتر */
+            border-radius: 5px;
+            text-align: left; /* اعداد فارسی */
         }
 
-        /* دکمه‌های شبیه iOS */
         .btn-ios {
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-size: 16px;
+            border-radius: 20px;
+            padding: 8px 16px; /* کاهش padding */
+            font-size: 14px; /* کاهش فونت */
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -84,9 +72,9 @@
             background-color: #6c757d;
             color: #fff;
             border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-size: 16px;
+            border-radius: 20px;
+            padding: 8px 16px; /* کاهش padding */
+            font-size: 14px; /* کاهش فونت */
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -95,9 +83,19 @@
             background-color: #5a6268;
         }
 
+        .toggle-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-button label {
+            margin: 0;
+        }
+
         /* فیلد پرداختی بزرگتر و بولد */
         #mDaryafti {
-            font-size: 20px;
+            font-size: 18px; /* کاهش فونت */
             font-weight: bold;
             color: #007bff;
         }
@@ -112,14 +110,27 @@
             background-color: #007bff;
         }
 
-        /* فوتر */
-        footer {
+        /* بهینه‌سازی موبایل */
+        @media (max-width: 768px) {
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-group label {
+                margin-bottom: 5px;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+            }
+        }
+
+        /* دکمه‌ها در انتهای پنل محاسبات */
+        .panel-buttons {
+            margin-top: 15px; /* کاهش فاصله */
             text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-top: 1px solid #ddd;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -168,8 +179,8 @@
                         </div>
                         <!-- Ayab (Coming and Going) -->
                         <div class="form-group">
-                            <label for="ayab">عیب (ایاب وذهاب):</label>
-                            <input type="number" id="ayab" class="form-control" value="0">
+                            <label for="ayab">عیب (ایاب و ذهاب):</label>
+                            <input type="number" id="ayab" class="form-control" value="0" ondblclick="increaseAyab()">
                         </div>
                         <!-- Zarib Ezafe -->
                         <div class="form-group">
@@ -209,7 +220,7 @@
                         <!-- پاداش -->
                         <div class="form-group">
                             <label for="padash">پاداش:</label>
-                            <input type="number" id="padash" class="form-control" value="0">
+                            <input type="number" id="padash" class="form-control" value="0" ondblclick="increasePadash()">
                         </div>
                     </form>
                 </div>
@@ -251,247 +262,16 @@
                         <label for="mDaryafti">حقوق خالص:</label>
                         <input type="text" id="mDaryafti" class="form-control" readonly>
                     </div>
+                    <!-- دکمه‌ها در انتهای پنل محاسبات -->
+                    <div class="panel-buttons">
+                        <button type="button" class="btn-ios" onclick="mohasebe()">محاسبه</button>
+                        <button type="button" class="btn-secondary" onclick="printForm()">چاپ</button>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- دکمه‌ها -->
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <button type="button" class="btn-ios" onclick="mohasebe()">محاسبه</button>
-                <button type="button" class="btn-secondary" onclick="printForm()">چاپ</button>
-            </div>
-        </div>
-
-        <!-- فوتر -->
-        <footer>
-            توسعه‌دهنده: امین ناصری کریم‌وند | ایمیل: <a href="mailto:Akarimvand@gmail.com">Akarimvand@gmail.com</a>
-        </footer>
     </div>
-    <script>
-        // داده‌های ماه‌های فارسی و تعداد روزهای هر ماه
-        const monthsData = [
-            { name: 'فروردین', days: 31 },
-            { name: 'اردیبهشت', days: 31 },
-            { name: 'خرداد', days: 31 },
-            { name: 'تیر', days: 31 },
-            { name: 'مرداد', days: 31 },
-            { name: 'شهریور', days: 30 },
-            { name: 'مهر', days: 30 },
-            { name: 'آبان', days: 30 },
-            { name: 'آذر', days: 30 },
-            { name: 'دی', days: 30 },
-            { name: 'بهمن', days: 30 },
-            { name: 'اسفند', days: 29 }
-        ];
-
-        // رویداد بارگذاری صفحه
-        document.addEventListener('DOMContentLoaded', function () {
-            initializeForm();
-        });
-
-        // تابع مقداردهی اولیه فرم
-        function initializeForm() {
-            populateMonthDropdown();
-            populateChildrenDropdown();
-            updateMonthDays();
-
-            // تنظیم پیش‌فرض منطقه به "منطقه ویژه"
-            setDefaultRegion();
-
-            // اضافه کردن رویداد تغییر به کامبوی ماه
-            document.getElementById('monthName').addEventListener('change', function () {
-                updateMonthDays();
-            });
-        }
-
-        // تابع تنظیم پیش‌فرض منطقه به "منطقه ویژه"
-        function setDefaultRegion() {
-            const mantagheToggle = document.getElementById('mantagheToggle');
-            mantagheToggle.textContent = 'منطقه ویژه'; // تنظیم متن دکمه
-            mantagheToggle.classList.add('region-special'); // افزودن کلاس CSS
-        }
-
-        // پر کردن dropdown ماه‌ها
-        function populateMonthDropdown() {
-            const monthName = document.getElementById('monthName');
-            monthsData.forEach((month, index) => {
-                const option = document.createElement('option');
-                option.value = index + 1;
-                option.textContent = month.name;
-                monthName.appendChild(option);
-            });
-            monthName.value = '1'; // پیش‌فرض: فروردین
-        }
-
-        // پر کردن dropdown تعداد فرزند
-        function populateChildrenDropdown() {
-            const tFarzand = document.getElementById('tFarzand');
-            for (let i = 0; i <= 3; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                tFarzand.appendChild(option);
-            }
-            tFarzand.value = '0'; // پیش‌فرض: ۰ فرزند
-        }
-
-        // تابع به‌روزرسانی تعداد روزهای ماه و حضور
-        function updateMonthDays() {
-            const selectedMonthIndex = parseInt(document.getElementById('monthName').value) - 1;
-            const selectedMonth = monthsData[selectedMonthIndex];
-            const monthDays = document.getElementById('monthDays');
-            const hozor = document.getElementById('hozor');
-
-            // تنظیم تعداد روزهای ماه
-            monthDays.value = selectedMonth.days;
-
-            // پر کردن dropdown حضور
-            hozor.innerHTML = '';
-            for (let i = 1; i <= selectedMonth.days; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                hozor.appendChild(option);
-            }
-            hozor.value = selectedMonth.days.toString(); // پیش‌فرض: تعداد روزهای ماه
-
-            // به‌روزرسانی dropdown مرخصی
-            updateMorakhasi();
-        }
-
-        // تابع به‌روزرسانی dropdown مرخصی
-        function updateMorakhasi() {
-            const morakhasi = document.getElementById('morakhasi');
-            const monthDays = parseInt(document.getElementById('monthDays').value);
-            const hozorValue = parseInt(document.getElementById('hozor').value);
-
-            morakhasi.innerHTML = '';
-            for (let i = 0; i <= monthDays - hozorValue; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                morakhasi.appendChild(option);
-            }
-            morakhasi.value = '0'; // پیش‌فرض: ۰ روز مرخصی
-        }
-
-        // تابع تغییر مقدار حق تاهل
-        function toggleHaghtahol() {
-            const haghtahol = document.getElementById('haghtahol');
-            haghtahol.value = haghtahol.value === '0' ? '5000000' : '0';
-        }
-
-        // تابع تغییر منطقه (عادی/ویژه)
-        function toggleMantaghe() {
-            const mantagheToggle = document.getElementById('mantagheToggle');
-            const isSpecialRegion = mantagheToggle.textContent === 'منطقه عادی';
-            mantagheToggle.textContent = isSpecialRegion ? 'منطقه ویژه' : 'منطقه عادی';
-            mantagheToggle.classList.toggle('region-special', isSpecialRegion);
-        }
-
-        // تابع محاسبه حقوق
-        function mohasebe() {
-            const inputs = getInputValues();
-            if (!validateInputs(inputs)) return;
-
-            const results = calculateSalary(inputs);
-            displayResults(results);
-        }
-
-        // تابع دریافت مقادیر ورودی
-        function getInputValues() {
-            return {
-                dastmozRozaneh: parseFloat(document.getElementById('dastmozRozaneh').value),
-                zarib: parseFloat(document.getElementById('zarib').value),
-                tFarzand: parseFloat(document.getElementById('tFarzand').value),
-                zaribEzafe: parseFloat(document.getElementById('zaribEzafe').value),
-                eKargahi: parseFloat(document.getElementById('eKargahi').value),
-                eSaati: parseFloat(document.getElementById('eSaati').value),
-                ayab: parseFloat(document.getElementById('ayab').value),
-                haghtahol: parseFloat(document.getElementById('haghtahol').value),
-                mantaghe: document.getElementById('mantagheToggle').textContent === 'منطقه ویژه',
-                hozor: parseInt(document.getElementById('hozor').value),
-                morakhasi: parseInt(document.getElementById('morakhasi').value),
-                monthDays: parseInt(document.getElementById('monthDays').value), // تعداد روزهای ماه
-                mMosaede: parseFloat(document.getElementById('mMosaede').value),
-                padash: parseFloat(document.getElementById('padash').value)
-            };
-        }
-
-        // تابع اعتبارسنجی ورودی‌ها
-        function validateInputs(inputs) {
-            if (isNaN(inputs.dastmozRozaneh) || inputs.dastmozRozaneh <= 0) {
-                alert('لطفاً مبلغ دستمزد روزانه را به ریال وارد نمایید.');
-                return false;
-            }
-            return true;
-        }
-
-        // تابع محاسبه حقوق
-        function calculateSalary(inputs) {
-            const { dastmozRozaneh, zarib, tFarzand, zaribEzafe, eKargahi, eSaati, ayab, haghtahol, mantaghe, hozor, morakhasi, monthDays, mMosaede, padash } = inputs;
-
-            // محاسبه حقوق پایه با توجه به تعداد روزهای ماه
-            const mDasMah = (hozor + morakhasi) * dastmozRozaneh;
-
-            // محاسبه حق اولاد، حق مسکن و حق بن با توجه به تعداد روزهای ماه
-            const mHaghOlad = (tFarzand * 7166000) * ((hozor + morakhasi) / monthDays);
-            const hMaskan = 9000000 * ((hozor + morakhasi) / monthDays);
-            const hBon = 14000000 * ((hozor + morakhasi) / monthDays);
-
-            // محاسبه ضریب و اضافه کاری
-            const mZarib = (mDasMah * zarib) - mDasMah;
-            const eSabat = mDasMah * (zaribEzafe / 100);
-            const mEzafe = ((eKargahi + eSaati) * ((dastmozRozaneh / 7.33) * 1.4 * zarib)) + eSabat;
-
-            // محاسبه ناخالص حقوق
-            const nakhales = mEzafe + mDasMah + mZarib + hMaskan + hBon;
-            const nakhales2 = nakhales + mHaghOlad;
-
-            // محاسبه بیمه و مالیات
-            const hBimeh = nakhales * 0.07;
-            const mMalyat = calculateTax(nakhales2, mantaghe);
-
-            // محاسبه حقوق خالص
-            const mDaryafti = nakhales - hBimeh - mMalyat + mHaghOlad + ayab + haghtahol - mMosaede + padash;
-
-            return { mDasMah, mHaghOlad, hMaskan, hBon, mEzafe, hBimeh, mMalyat, mDaryafti };
-        }
-
-        // تابع محاسبه مالیات
-        function calculateTax(nakhales2, mantaghe) {
-            if (mantaghe) {
-                if (nakhales2 <= 120000000) return 0;
-                if (nakhales2 <= 160000000) return (nakhales2 * 0.1) / 2;
-                if (nakhales2 <= 270000000) return (nakhales2 * 0.15) / 2;
-                if (nakhales2 <= 400000000) return (nakhales2 * 0.2) / 2;
-                return (nakhales2 * 0.3) / 2;
-            } else {
-                if (nakhales2 <= 120000000) return 0;
-                if (nakhales2 <= 160000000) return nakhales2 * 0.1;
-                if (nakhales2 <= 270000000) return nakhales2 * 0.15;
-                if (nakhales2 <= 400000000) return nakhales2 * 0.2;
-                return nakhales2 * 0.3;
-            }
-        }
-
-        // تابع نمایش نتایج
-        function displayResults(results) {
-            for (const [key, value] of Object.entries(results)) {
-                document.getElementById(key).value = formatNumber(value);
-            }
-        }
-
-        // تابع فرمت‌دهی اعداد به فرمت فارسی
-        function formatNumber(num) {
-            return num.toLocaleString('fa-IR');
-        }
-
-        // تابع چاپ فرم
-        function printForm() {
-            window.print();
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
